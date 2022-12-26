@@ -62,18 +62,18 @@ set_target_properties (
 target_link_libraries (
    KF5ActivitiesStats
    PUBLIC
-      Qt5::Core
+      Qt${QT_MAJOR_VERSION}::Core
    PRIVATE
       Boost::boost
-      Qt5::DBus
-      Qt5::Sql
+      Qt${QT_MAJOR_VERSION}::DBus
+      Qt${QT_MAJOR_VERSION}::Sql
       KF5::Activities
       KF5::ConfigCore
    )
 
 target_include_directories (
    KF5ActivitiesStats
-   INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF5}/KActivitiesStats>"
+   INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF}/KActivitiesStats>"
    )
 
 # install
@@ -102,13 +102,13 @@ install (
 
 install (
    FILES ${KActivitiesStats_CamelCase_HEADERS}
-   DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5}/KActivitiesStats/KActivities/Stats
+   DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KActivitiesStats/KActivities/Stats
    COMPONENT Devel
    )
 
 install (
    FILES ${KActivitiesStats_HEADERS} ${CMAKE_CURRENT_BINARY_DIR}/kactivitiesstats_export.h
-   DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5}/KActivitiesStats/kactivitiesstats
+   DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KActivitiesStats/kactivitiesstats
    COMPONENT Devel
    )
 
@@ -144,14 +144,13 @@ if(BUILD_QCH)
 endif()
 
 if (NOT WIN32)
-   configure_file (
-      ${CMAKE_CURRENT_SOURCE_DIR}/libKActivitiesStats.pc.cmake
-      ${CMAKE_CURRENT_BINARY_DIR}/libKActivitiesStats.pc
-      )
-   install (
-      FILES ${CMAKE_CURRENT_BINARY_DIR}/libKActivitiesStats.pc
-      DESTINATION ${KDE_INSTALL_LIBDIR}/pkgconfig
-      )
+    ecm_generate_pkgconfig_file(BASE_NAME libKActivitiesStats
+      LIB_NAME KF5ActivitiesStats
+      INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF}/KActivitiesStats
+      DEPS Qt${QT_MAJOR_VERSION}Core
+      DESCRIPTION "libKActivitiesStats is a C++ library for using KDE activities"
+      INSTALL
+    )
 endif ()
 
 include (ECMGeneratePriFile)
@@ -159,7 +158,7 @@ ecm_generate_pri_file (
    BASE_NAME KActivitiesStats
    LIB_NAME KF5ActivitiesStats
    DEPS "KActivities"
-   FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF5}/KActivitiesStats
+   FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF}/KActivitiesStats
    )
 install (
    FILES ${PRI_FILENAME}

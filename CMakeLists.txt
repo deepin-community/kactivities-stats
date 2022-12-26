@@ -2,8 +2,8 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-set(KF_VERSION "5.86.0") # handled by release scripts
-set(KF_DEP_VERSION "5.86.0") # handled by release scripts
+set(KF_VERSION "5.90.0") # handled by release scripts
+set(KF_DEP_VERSION "5.90.0") # handled by release scripts
 project (KActivitiesStats VERSION ${KF_VERSION})
 
 set (REQUIRED_QT_VERSION 5.15.2)
@@ -20,7 +20,7 @@ set (KASTATS_CURRENT_ROOT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Extra CMake stuff
 include (FeatureSummary)
-find_package (ECM 5.86.0  NO_MODULE)
+find_package (ECM 5.90.0  NO_MODULE)
 set_package_properties (ECM PROPERTIES TYPE REQUIRED DESCRIPTION "Extra CMake Modules." URL "https://commits.kde.org/extra-cmake-modules")
 feature_summary (WHAT REQUIRED_PACKAGES_NOT_FOUND FATAL_ON_MISSING_REQUIRED_PACKAGES)
 
@@ -32,6 +32,7 @@ include(KDEGitCommitHooks)
 include (KDEFrameworkCompilerSettings NO_POLICY_SCOPE)
 include (GenerateExportHeader)
 include (ECMGenerateHeaders)
+include (ECMGeneratePkgConfigFile)
 include (ECMAddQch)
 include (ECMQtDeclareLoggingCategory)
 
@@ -40,7 +41,7 @@ add_feature_info(QCH ${BUILD_QCH} "API documentation in QCH format (for e.g. Qt 
 
 # Qt
 set (CMAKE_AUTOMOC ON)
-find_package (Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED COMPONENTS Core DBus Sql)
+find_package (Qt${QT_MAJOR_VERSION} ${REQUIRED_QT_VERSION} CONFIG REQUIRED COMPONENTS Core DBus Sql)
 
 # KDE Frameworks
 # find_package (KF5DBusAddons ${KF_DEP_VERSION} CONFIG REQUIRED)
@@ -83,7 +84,7 @@ ecm_setup_version (
    SOVERSION 1
    )
 add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x050f02)
-add_definitions(-DKF_DISABLE_DEPRECATED_BEFORE_AND_AT=0x055100)
+add_definitions(-DKF_DISABLE_DEPRECATED_BEFORE_AND_AT=0x055900)
 
 add_subdirectory (src)
 if(BUILD_TESTING)
@@ -125,7 +126,7 @@ install (
 
 install (
    FILES ${CMAKE_CURRENT_BINARY_DIR}/kactivitiesstats_version.h
-   DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5} COMPONENT Devel
+   DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF} COMPONENT Devel
    )
 
 # Write out the features
