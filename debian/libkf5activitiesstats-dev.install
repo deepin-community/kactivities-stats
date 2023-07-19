@@ -1,5 +1,4 @@
 usr/include/KF5/KActivitiesStats/
-usr/include/KF5/kactivitiesstats_version.h
 usr/lib/*/cmake/KF5ActivitiesStats/
 usr/lib/*/libKF5ActivitiesStats.so
 usr/lib/*/pkgconfig/libKActivitiesStats.pc

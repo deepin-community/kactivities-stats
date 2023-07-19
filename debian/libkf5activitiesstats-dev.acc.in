@@ -7,7 +7,6 @@
 
 <headers>
     /usr/include/KF5/KActivitiesStats/
-    /usr/include/KF5/kactivitiesstats_version.h
 </headers>
 
 <libs>

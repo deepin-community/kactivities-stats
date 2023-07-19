@@ -6,6 +6,7 @@ libKF5ActivitiesStats.so.1 libkf5activitiesstats1 #MINVER#
  _ZN11KActivities5Stats11ResultModel14forgetResourceERK7QString@Base 5.20
  _ZN11KActivities5Stats11ResultModel14forgetResourceEi@Base 5.20
  _ZN11KActivities5Stats11ResultModel14linkToActivityERK4QUrlRKNS0_5Terms8ActivityERKNS5_5AgentE@Base 5.20
+ _ZN11KActivities5Stats11ResultModel15forgetResourcesERK5QListI7QStringE@Base 5.94.0
  _ZN11KActivities5Stats11ResultModel16staticMetaObjectE@Base 5.20
  _ZN11KActivities5Stats11ResultModel17setResultPositionERK7QStringi@Base 5.20
  _ZN11KActivities5Stats11ResultModel18forgetAllResourcesEv@Base 5.20
@@ -199,27 +200,30 @@ libKF5ActivitiesStats.so.1 libkf5activitiesstats1 #MINVER#
  _ZTIN11KActivities5Stats11ResultModelE@Base 5.20
  _ZTIN11KActivities5Stats13ResultWatcherE@Base 5.20
  (optional=gccinternal|arch=armel riscv64)_ZTIN9__gnu_cxx7__mutexE@Base 5.22.0
+ _ZTINSt6thread11_State_implINS_8_InvokerISt5tupleIJZN11KActivities5Stats18ResultModelPrivate5Cache7replaceERK5QListINS4_9ResultSet6ResultEEiEUlvE_EEEEEE@Base 5.94.0
  (optional=gccinternal|arch=armel riscv64)_ZTISt11_Mutex_baseILN9__gnu_cxx12_Lock_policyE1EE@Base 5.22.0
  (optional=gccinternal|arch=!armel !riscv64)_ZTISt11_Mutex_baseILN9__gnu_cxx12_Lock_policyE2EE@Base 5.20
  (optional=gccinternal|arch=armel riscv64)_ZTISt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE1EE@Base 5.22.0
  (optional=gccinternal|arch=!armel !riscv64)_ZTISt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE@Base 5.20
  (arch=armel armhf)_ZTISt19_Sp_make_shared_tag@Base 5.69.0
  (optional=templinst|arch=armel riscv64)_ZTISt23_Sp_counted_ptr_inplaceIN11KActivities8ConsumerESaIS1_ELN9__gnu_cxx12_Lock_policyE1EE@Base 5.22.0
- (optional=templinst|arch=!armel !riscv64)_ZTISt23_Sp_counted_ptr_inplaceIN11KActivities8ConsumerESaIS1_ELN9__gnu_cxx12_Lock_policyE2EE@Base 5.20
+ (optional=templinst|arch=!armel !riscv64)_ZTISt23_Sp_counted_ptr_inplaceIN11KActivities8ConsumerESaIvELN9__gnu_cxx12_Lock_policyE2EE@Base 5.96.0
  _ZTSN11KActivities5Stats11ResultModelE@Base 5.20
  _ZTSN11KActivities5Stats13ResultWatcherE@Base 5.20
  (optional=gccinternal|arch=armel riscv64)_ZTSN9__gnu_cxx7__mutexE@Base 5.22.0
+ _ZTSNSt6thread11_State_implINS_8_InvokerISt5tupleIJZN11KActivities5Stats18ResultModelPrivate5Cache7replaceERK5QListINS4_9ResultSet6ResultEEiEUlvE_EEEEEE@Base 5.94.0
  (optional=gccinternal|arch=armel riscv64)_ZTSSt11_Mutex_baseILN9__gnu_cxx12_Lock_policyE1EE@Base 5.22.0
  (optional=gccinternal|arch=!armel !riscv64)_ZTSSt11_Mutex_baseILN9__gnu_cxx12_Lock_policyE2EE@Base 5.20
  (optional=gccinternal|arch=armel riscv64)_ZTSSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE1EE@Base 5.22.0
  (optional=gccinternal|arch=!armel !riscv64)_ZTSSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE@Base 5.20
  _ZTSSt19_Sp_make_shared_tag@Base 5.20
  (optional=templinst|arch=armel riscv64)_ZTSSt23_Sp_counted_ptr_inplaceIN11KActivities8ConsumerESaIS1_ELN9__gnu_cxx12_Lock_policyE1EE@Base 5.22.0
- (optional=gccinternal|arch=!armel !riscv64)_ZTSSt23_Sp_counted_ptr_inplaceIN11KActivities8ConsumerESaIS1_ELN9__gnu_cxx12_Lock_policyE2EE@Base 5.20
+ (optional=gccinternal|arch=!armel !riscv64)_ZTSSt23_Sp_counted_ptr_inplaceIN11KActivities8ConsumerESaIvELN9__gnu_cxx12_Lock_policyE2EE@Base 5.96.0
  _ZTVN11KActivities5Stats11ResultModelE@Base 5.20
  _ZTVN11KActivities5Stats13ResultWatcherE@Base 5.20
+ _ZTVNSt6thread11_State_implINS_8_InvokerISt5tupleIJZN11KActivities5Stats18ResultModelPrivate5Cache7replaceERK5QListINS4_9ResultSet6ResultEEiEUlvE_EEEEEE@Base 5.94.0
  (optional=templinst|arch=armel riscv64)_ZTVSt23_Sp_counted_ptr_inplaceIN11KActivities8ConsumerESaIS1_ELN9__gnu_cxx12_Lock_policyE1EE@Base 5.22.0
- (optional=gccinternal|arch=!armel !riscv64)_ZTVSt23_Sp_counted_ptr_inplaceIN11KActivities8ConsumerESaIS1_ELN9__gnu_cxx12_Lock_policyE2EE@Base 5.20
+ (optional=gccinternal|arch=!armel !riscv64)_ZTVSt23_Sp_counted_ptr_inplaceIN11KActivities8ConsumerESaIvELN9__gnu_cxx12_Lock_policyE2EE@Base 5.96.0
  _ZZNSt19_Sp_make_shared_tag5_S_tiEvE5__tag@Base 5.51.0
  _Zls6QDebugRKN11KActivities5Stats5QueryE@Base 5.20
  _Zls6QDebugRKN11KActivities5Stats5Terms3UrlE@Base 5.20

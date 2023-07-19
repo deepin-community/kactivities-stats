@@ -8,15 +8,15 @@
 #include "resultmodel.h"
 
 // Qt
-#include <QDebug>
-#include <QDateTime>
 #include <QCoreApplication>
+#include <QDateTime>
+#include <QDebug>
 #include <QFile>
+#include <QTimer>
 
-// STL and Boost
+// STL
 #include <functional>
-#include <boost/range/algorithm/find_if.hpp>
-#include <boost/range/algorithm/count_if.hpp>
+#include <thread>
 
 // KDE
 #include <KSharedConfig>
@@ -43,6 +43,8 @@
 namespace KActivities {
 namespace Stats {
 
+using Common::Database;
+
 class ResultModelPrivate {
 public:
     ResultModelPrivate(Query query, const QString &clientId, ResultModel *parent)
@@ -50,10 +52,9 @@ public:
         , query(query)
         , watcher(query)
         , hasMore(true)
+        , database(Database::instance(Database::ResourcesDatabase, Database::ReadOnly))
         , q(parent)
     {
-        using Common::Database;
-        database = Database::instance(Database::ResourcesDatabase, Database::ReadOnly);
         s_privates << this;
     }
 
@@ -123,7 +124,7 @@ public:
             // not others
             QStringList linkedItems;
 
-            for (const ResultSet::Result &item : qAsConst(m_items)) {
+            for (const ResultSet::Result &item : std::as_const(m_items)) {
                 if (item.linkStatus() == ResultSet::Result::NotLinked) {
                     break;
                 }
@@ -151,8 +152,6 @@ public:
                 Q_ASSERT(resourcePosition.index == linkedItems.indexOf(resourcePath));
                 auto oldPosition = linkedItems.indexOf(resourcePath);
 
-                const auto oldLinkedItems = linkedItems;
-
                 kamd::utils::move_one(
                         linkedItems.begin() + oldPosition,
                         linkedItems.begin() + position);
@@ -170,7 +169,7 @@ public:
             m_orderingConfig.sync();
 
             // We need to notify others to reload
-            for (const auto& other: s_privates) {
+            for (const auto &other : std::as_const(s_privates)) {
                 if (other != d && other->cache.m_clientId == m_clientId) {
                     other->fetch(FetchReset);
                 }
@@ -265,10 +264,10 @@ public:
         inline FindCacheResult find(const QString &resource)
         {
             using namespace kamd::utils::member_matcher;
-            using boost::find_if;
 
+            // Non-const iterator because the result is constructed from it
             return FindCacheResult(
-                this, find_if(m_items, member(&ResultSet::Result::resource)
+                this, std::find_if(m_items.begin(), m_items.end(), member(&ResultSet::Result::resource)
                                            == resource));
         }
 
@@ -276,7 +275,7 @@ public:
         inline FindCacheResult lowerBoundWithSkippedResource(Predicate &&lessThanPredicate)
         {
             using namespace kamd::utils::member_matcher;
-            const int count = boost::count_if(m_items,
+            const int count = std::count_if(m_items.cbegin(), m_items.cend(),
                     [&] (const ResultSet::Result &result) {
                         return lessThanPredicate(result, _);
                     });
@@ -495,11 +494,24 @@ public:
 
             // Check whether we got an item representing a non-existent file,
             // if so, schedule its removal from the database
-            for (const auto &item: newItems) {
-                if (item.resource().startsWith(QLatin1Char('/')) && !QFile(item.resource()).exists()) {
-                    d->q->forgetResource(item.resource());
+            // we want to do this async so that we don't block
+            std::thread([=] {
+                QList<QString> missingResources;
+                for (const auto &item: newItems) {
+                    // QFile.exists() can be incredibly slow (eg. if resource is on remote filesystem)
+                    if (item.resource().startsWith(QLatin1Char('/')) && !QFile(item.resource()).exists()) {
+                        missingResources << item.resource();
+                    }
                 }
-            }
+
+                if (missingResources.empty()) {
+                    return;
+                }
+
+                QTimer::singleShot(0, this->d->q, [=] {
+                    d->q->forgetResources(missingResources);
+                });
+            }).detach();
         }
         //^
 
@@ -646,7 +658,7 @@ public:
         const int oldPosition = result.index;
         int position = destination.index;
 
-        q->dataChanged(q->index(oldPosition), q->index(oldPosition));
+        Q_EMIT q->dataChanged(q->index(oldPosition), q->index(oldPosition));
 
         if (oldPosition == position) {
             return;
@@ -932,7 +944,7 @@ public:
 
         result->setTitle(title);
 
-        q->dataChanged(q->index(result.index), q->index(result.index));
+        Q_EMIT q->dataChanged(q->index(result.index), q->index(result.index));
     }
 
     void onResourceMimetypeChanged(const QString &resource, const QString &mimetype)
@@ -947,7 +959,7 @@ public:
 
         result->setMimetype(mimetype);
 
-        q->dataChanged(q->index(result.index), q->index(result.index));
+        Q_EMIT q->dataChanged(q->index(result.index), q->index(result.index));
     }
     //^
 
@@ -1062,21 +1074,28 @@ bool ResultModel::canFetchMore(const QModelIndex &parent) const
          : d->hasMore;
 }
 
-void ResultModel::forgetResource(const QString &resource)
+void ResultModel::forgetResources(const QList<QString> &resources)
 {
     const auto lstActivities = d->query.activities();
     for (const QString &activity : lstActivities) {
         const auto lstAgents = d->query.agents();
         for (const QString &agent : lstAgents) {
-            /* clang-format off */
-            Stats::forgetResource(
-                    activity,
-                    agent == CURRENT_AGENT_TAG ?
-                        QCoreApplication::applicationName() : agent,
-                    resource);
-            /* clang-format on */
+            for (const QString &resource : resources) {
+                /* clang-format off */
+                Stats::forgetResource(
+                        activity,
+                        agent == CURRENT_AGENT_TAG ?
+                            QCoreApplication::applicationName() : agent,
+                        resource);
+                /* clang-format on */
+            }
         }
     }
+}
+
+void ResultModel::forgetResource(const QString &resource)
+{
+    ResultModel::forgetResources({ resource });
 }
 
 void ResultModel::forgetResource(int row)

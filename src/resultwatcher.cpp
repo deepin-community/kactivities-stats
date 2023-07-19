@@ -18,8 +18,7 @@
 #include <common/database/Database.h>
 #include <utils/debug_and_return.h>
 
-// Boost and STL
-#include <boost/range/algorithm/transform.hpp>
+// STL
 #include <functional>
 #include <iterator>
 #include <limits>
@@ -67,7 +66,6 @@ public:
         QObject::connect(&m_resultInvalidationTimer, &QTimer::timeout, q, Q_EMIT & ResultWatcher::resultsInvalidated);
     }
 
-    // Like boost any_of, but returning true if the range is empty
     template<typename Collection, typename Predicate>
     inline bool any_of(const Collection &collection, Predicate &&predicate) const
     {
@@ -284,8 +282,8 @@ public:
         m_resultInvalidationTimer.start();
     }
 
-    QScopedPointer<org::kde::ActivityManager::ResourcesLinking> linking;
-    QScopedPointer<org::kde::ActivityManager::ResourcesScoring> scoring;
+    std::unique_ptr<org::kde::ActivityManager::ResourcesLinking> linking;
+    std::unique_ptr<org::kde::ActivityManager::ResourcesScoring> scoring;
 
     ResultWatcher *const q;
     Query query;
@@ -301,26 +299,26 @@ ResultWatcher::ResultWatcher(Query query, QObject *parent)
     // There is no need for private slots, when we have bind
 
     // Connecting the linking service
-    QObject::connect(d->linking.data(),
+    QObject::connect(d->linking.get(),
                      &ResourcesLinking::ResourceLinkedToActivity,
                      this,
                      std::bind(&ResultWatcherPrivate::onResourceLinkedToActivity, d, _1, _2, _3));
-    QObject::connect(d->linking.data(),
+    QObject::connect(d->linking.get(),
                      &ResourcesLinking::ResourceUnlinkedFromActivity,
                      this,
                      std::bind(&ResultWatcherPrivate::onResourceUnlinkedFromActivity, d, _1, _2, _3));
 
     // Connecting the scoring service
-    QObject::connect(d->scoring.data(),
+    QObject::connect(d->scoring.get(),
                      &ResourcesScoring::ResourceScoreUpdated,
                      this,
                      std::bind(&ResultWatcherPrivate::onResourceScoreUpdated, d, _1, _2, _3, _4, _5, _6));
-    QObject::connect(d->scoring.data(),
+    QObject::connect(d->scoring.get(),
                      &ResourcesScoring::ResourceScoreDeleted,
                      this,
                      std::bind(&ResultWatcherPrivate::onStatsForResourceDeleted, d, _1, _2, _3));
-    QObject::connect(d->scoring.data(), &ResourcesScoring::RecentStatsDeleted, this, std::bind(&ResultWatcherPrivate::onRecentStatsDeleted, d, _1, _2, _3));
-    QObject::connect(d->scoring.data(), &ResourcesScoring::EarlierStatsDeleted, this, std::bind(&ResultWatcherPrivate::onEarlierStatsDeleted, d, _1, _2));
+    QObject::connect(d->scoring.get(), &ResourcesScoring::RecentStatsDeleted, this, std::bind(&ResultWatcherPrivate::onRecentStatsDeleted, d, _1, _2, _3));
+    QObject::connect(d->scoring.get(), &ResourcesScoring::EarlierStatsDeleted, this, std::bind(&ResultWatcherPrivate::onEarlierStatsDeleted, d, _1, _2));
 }
 
 ResultWatcher::~ResultWatcher()

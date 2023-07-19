@@ -2,8 +2,8 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-set(KF_VERSION "5.90.0") # handled by release scripts
-set(KF_DEP_VERSION "5.90.0") # handled by release scripts
+set(KF_VERSION "5.103.0") # handled by release scripts
+set(KF_DEP_VERSION "5.103.0") # handled by release scripts
 project (KActivitiesStats VERSION ${KF_VERSION})
 
 set (REQUIRED_QT_VERSION 5.15.2)
@@ -20,7 +20,7 @@ set (KASTATS_CURRENT_ROOT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Extra CMake stuff
 include (FeatureSummary)
-find_package (ECM 5.90.0  NO_MODULE)
+find_package (ECM 5.103.0  NO_MODULE)
 set_package_properties (ECM PROPERTIES TYPE REQUIRED DESCRIPTION "Extra CMake Modules." URL "https://commits.kde.org/extra-cmake-modules")
 feature_summary (WHAT REQUIRED_PACKAGES_NOT_FOUND FATAL_ON_MISSING_REQUIRED_PACKAGES)
 
@@ -35,6 +35,7 @@ include (ECMGenerateHeaders)
 include (ECMGeneratePkgConfigFile)
 include (ECMAddQch)
 include (ECMQtDeclareLoggingCategory)
+include(ECMDeprecationSettings)
 
 option(BUILD_QCH "Build API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)" OFF)
 add_feature_info(QCH ${BUILD_QCH} "API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)")
@@ -48,9 +49,7 @@ find_package (Qt${QT_MAJOR_VERSION} ${REQUIRED_QT_VERSION} CONFIG REQUIRED COMPO
 # find_package (KF5I18n ${KF_DEP_VERSION} CONFIG REQUIRED)
 find_package (KF5Config ${KF_DEP_VERSION} CONFIG REQUIRED)
 find_package (KF5Activities ${KF_DEP_VERSION} CONFIG REQUIRED)
-
-set(Boost_NO_BOOST_CMAKE ON)
-find_package (Boost 1.49 REQUIRED)
+find_package(Threads REQUIRED)
 
 # Basic includes
 include (CPack)
@@ -83,12 +82,19 @@ ecm_setup_version (
    PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KF5ActivitiesStatsConfigVersion.cmake"
    SOVERSION 1
    )
-add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x050f02)
-add_definitions(-DKF_DISABLE_DEPRECATED_BEFORE_AND_AT=0x055900)
+ecm_set_disabled_deprecation_versions(
+    QT 5.15.2
+    KF 5.95.0
+)
+
 
 add_subdirectory (src)
 if(BUILD_TESTING)
-  add_subdirectory (autotests)
+  set(Boost_NO_BOOST_CMAKE ON)
+  find_package (Boost 1.49)
+  if (Boost_FOUND)
+    add_subdirectory (autotests)
+  endif ()
   add_subdirectory (tests)
 endif (BUILD_TESTING)
 
@@ -126,7 +132,7 @@ install (
 
 install (
    FILES ${CMAKE_CURRENT_BINARY_DIR}/kactivitiesstats_version.h
-   DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF} COMPONENT Devel
+   DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KActivitiesStats COMPONENT Devel
    )
 
 # Write out the features
