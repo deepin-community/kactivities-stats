@@ -64,11 +64,11 @@ target_link_libraries (
    PUBLIC
       Qt${QT_MAJOR_VERSION}::Core
    PRIVATE
-      Boost::boost
       Qt${QT_MAJOR_VERSION}::DBus
       Qt${QT_MAJOR_VERSION}::Sql
       KF5::Activities
       KF5::ConfigCore
+      Threads::Threads
    )
 
 target_include_directories (
@@ -97,7 +97,7 @@ install (
    TARGETS KF5ActivitiesStats
    EXPORT KF5ActivitiesStatsLibraryTargets
    ${SKIP_NAMELINK}
-   ${KF5_INSTALL_TARGETS_DEFAULT_ARGS}
+   ${KF_INSTALL_TARGETS_DEFAULT_ARGS}
    )
 
 install (
